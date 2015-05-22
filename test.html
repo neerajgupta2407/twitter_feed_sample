@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/ppws.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+
+
+
+<script>
+$( document ).ready(function() {
+	
+
+window.start = 0;
+$(window).scroll(function(){
+  
+	 if($(window).scrollTop()   == $(document).height() - $(window).height() )
+  {
+		
+		var current_height = $(window).height();
+		console.log('scrolling');
+	//	window.start += 100;
+		var limit = 100;
+		update_list(window.start,limit);
+		window.start += 100;
+		
+		//$.scrollTo(current_height);
+		
+	} 
+});
+
+});
+function update_list(start,limit)
+{
+	var sUrl = 'feed.php';
+	var dt = {'start' : start,'limit':limit};
+	jQuery.ajax({
+		dataType: 'json',
+		method: 'get',
+		url: sUrl,
+		data: dt,
+		beforeSend: function () {
+			//we will show loading div before initiating ajax call
+		
+		},
+		success: function (resp) {
+
+			if (resp.status == true)
+			{ 
+				success_update(resp);
+			}
+			else
+			{
+				alert(resp.error_msg);
+
+			}
+			
+		},
+	});
+}
+
+function success_update(resp)
+{
+	var data = resp.data;
+	
+	$.each(data,function (key,val){
+		
+		var  str = val+'<br />';
+		$('#test').append(str);
+		
+	});
+}
+
+
+function write(text) {
+	var date = new Date();
+	var dateText = '['+date.getFullYear()+'-'+(date.getMonth()+1 > 9 ? date.getMonth()+1 : '0'+date.getMonth()+1)+'-'+(date.getDate() > 9 ? date.getDate() : '0'+date.getDate())+' '+(date.getHours() > 9 ? date.getHours() : '0'+date.getHours())+':'+(date.getMinutes() > 9 ? date.getMinutes() : '0'+date.getMinutes())+':'+(date.getSeconds() > 9 ? date.getSeconds() : '0'+date.getSeconds())+']';
+	//var terminal = document.getElementById('terminal');
+	$('#terminal').html(dateText+' '+text);
+	//terminal.innerHTML = '<li>'+dateText+' '+text+'</li>'+terminal.innerHTML;
+}
+
+
+
+</script>
+
+<p id="terminal" style="position: fixed; padding-left: 200px;"></p>
+
+
+<div id= 'test'>
+
+</div>
+
+<script type="text/javascript">
+update_list(0,100);
+</script>
+
+</body>
+</html>
